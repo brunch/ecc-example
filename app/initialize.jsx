@@ -37,15 +37,19 @@ class ECCCalculator extends React.Component {
 
   calculateKeys() {
     const priv = this.state.privateKey;
+    console.log('Calculating keys');
+    console.time('secp256k1'); console.time('ed25519'); console.time('bls12');
+
     const privateKey = priv.replace(/^0x/, '');
-    console.log('Getting keys');
+
     const secpPub = secp256k1.getPublicKey(privateKey, {isCompressed: true});
-    console.log('✓ secp');
+    console.timeEnd('secp256k1');
+
     // this.setState({secpPub, isLoading: false});
     ed25519.getPublicKey(privateKey).then(edPub => {
-      console.log('✓ ed25519');
+      console.timeEnd('ed25519');
       const blsPub = arrayToHex(bls12.getPublicKey(privateKey));
-      console.log('✓ bls12');
+      console.timeEnd('bls12');
       this.setState({secpPub, edPub, blsPub, isLoading: false});
       if (this.state.message) {
         this.setState({isSigning: true, message: this.state.message});
@@ -63,12 +67,15 @@ class ECCCalculator extends React.Component {
     const privateKey = priv.replace(/^0x/, '');
     const message = new TextEncoder().encode(msg);
     console.log('Signing');
+    console.time('secp256k1'); console.time('ed25519'); console.time('bls12');
+
     const ed = await ed25519.sign(msg, privateKey);
-    console.log('✓ ed25519', ed);
+    console.timeEnd('ed25519');
     const secp = secp256k1.sign(message, privateKey);
-    console.log('✓ secp256k1');
+    console.timeEnd('secp256k1');
     const bls = await bls12.sign(message, privateKey, 1);
-    console.log('✓ bls12');
+    console.timeEnd('bls12');
+
     this.setState({
       edSign: ed,
       secpSign: arrayToHex(secp),
