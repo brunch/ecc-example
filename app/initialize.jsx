@@ -100,7 +100,7 @@ class ECCCalculator extends React.Component {
   render() {
     return <div class="ecc-calculator">
       <strong>Private key in hex: </strong>
-      <input type="text" maxlength="66" value={this.state.privateKey} pattern="[\daAbBcCdDeEfFxX]{0,66}" onChange={this.onChange.bind(this)} />
+      <input type="text" maxlength="66" value={this.state.privateKey} pattern="[\daAbBcCdDeEfFxX]{0,66}" onChange={this.onChange.bind(this)} onKeyUp={this.onChange.bind(this)} />
       <button className="gen-random-key" onClick={this.generateRandomPrivateKey.bind(this)}>Random</button>
 
       <h3>Public keys {this.state.isLoading && <div className="lds-hourglass"></div>}</h3>
